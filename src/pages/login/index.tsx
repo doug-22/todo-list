@@ -15,7 +15,7 @@ export default function Login (){
         try {
             
             if(!email ||!password){
-                return Alert.alert('Anteção','Informe os campos obrigatórios!')
+                return Alert.alert('Anteção 2','Informe os campos obrigatórios!')
             }
 
             console.log('LOGOU!')
