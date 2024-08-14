@@ -1,17 +1,21 @@
 import React,{ useState } from "react";
 import { style } from "./styles";
 import Logo from '../../assets/logo.png'
-import { themas } from "../../global/themes";
- import {MaterialIcons} from '@expo/vector-icons';
-import {Text, View,Image,TextInput, TouchableOpacity, Alert} from 'react-native'
+import {MaterialIcons,Octicons} from '@expo/vector-icons';
+import {Text, View,Image,TouchableOpacity, Alert} from 'react-native'
+import { Input } from "../../components/Input";
+import { Button } from "../../components/Button";
 
 export default function Login (){
 
     const [email,setEmail] = useState('');
     const [password,setPassword] = useState('');
+    const [showPassword,setShowPassword] = useState(true);
+    const [loading,setLoading] = useState(false)
 
 
     async function getLogin() {
+        setLoading(true)
         try {
             
             if(!email ||!password){
@@ -19,10 +23,11 @@ export default function Login (){
             }
 
             console.log('LOGOU!')
-
+           
         } catch (error) {
             console.log(error)
         }
+        setLoading(false)
     }
 
 
@@ -37,37 +42,26 @@ export default function Login (){
                 <Text style={style.text}>Bem vindo de volta!</Text>
             </View>
             <View style={style.boxMid}>
-                <Text style={style.titleInput}>ENDEREÇO E-MAIL</Text>
-                <View style={style.boxInput}>
-                    <TextInput 
-                        style={style.input}
-                        onChangeText={setEmail}
-                        value={email}
-                    />
-                    <MaterialIcons 
-                        name="email"
-                        size={20}
-                        color={themas.Colors.gray}
-                    />
-                </View>
-                <Text style={style.titleInput}>ENDEREÇO E-MAIL</Text>
-                <View style={style.boxInput}>
-                    <TextInput 
-                        style={style.input}
-                        onChangeText={setPassword}
-                        value={password}
-                    />
-                    <MaterialIcons 
-                        name="remove-red-eye"
-                        size={20}
-                        color={themas.Colors.gray}
-                    />
-                </View>
+                <Input 
+                    title="ENDEREÇO E-MAIL"
+                    value={email}
+                    onChangeText={setEmail}
+                    IconRigth={MaterialIcons}
+                    iconRightName="email"
+                    onIconRigthPress={()=>console.log('OLA')}
+                />
+                <Input 
+                    title="SENHA"
+                    value={password}
+                    onChangeText={setPassword}
+                    IconRigth={Octicons}
+                    iconRightName={showPassword?"eye-closed":"eye"}
+                    onIconRigthPress={()=>setShowPassword(!showPassword)}
+                    secureTextEntry={showPassword}
+                />
             </View>
             <View style={style.boxBottom}>
-                <TouchableOpacity style={style.button} onPress={()=>getLogin()}>
-                    <Text style={style.textButton}>Entrar</Text>
-                </TouchableOpacity>
+                <Button  text="ENTRAR" loading={loading}/>
             </View>
             <Text style={style.textBottom}>Não tem conta? <Text  style={style.textBottomCreate}>Crie agora</Text></Text>
         </View>
