@@ -1,33 +1,34 @@
 import React,{ useState } from "react";
 import { style } from "./styles";
 import Logo from '../../assets/logo.png'
-import {MaterialIcons,Octicons} from '@expo/vector-icons';
-import {Text, View,Image,TouchableOpacity, Alert} from 'react-native'
 import { Input } from "../../components/Input";
 import { Button } from "../../components/Button";
+import {Text, View,Image, Alert} from 'react-native'
+import { useNavigation,NavigationProp  } from '@react-navigation/native';
+import {MaterialIcons,Octicons} from '@expo/vector-icons';
 
 export default function Login (){
+    const navigation = useNavigation<NavigationProp<any>>();
 
-    const [email,setEmail] = useState('');
-    const [password,setPassword] = useState('');
+    const [email,setEmail]               = useState('');
+    const [password,setPassword]         = useState('');
     const [showPassword,setShowPassword] = useState(true);
-    const [loading,setLoading] = useState(false)
+    const [loading,setLoading]           = useState(false);
 
 
     async function getLogin() {
-        setLoading(true)
         try {
+            setLoading(true)
             
             if(!email ||!password){
                 return Alert.alert('Anteção 2','Informe os campos obrigatórios!')
             }
-
-            console.log('LOGOU!')
-           
+            navigation.reset({routes:[{name :'BottomRoutes'}]});
         } catch (error) {
             console.log(error)
+        }finally{
+            setLoading(false)
         }
-        setLoading(false)
     }
 
 
@@ -61,7 +62,7 @@ export default function Login (){
                 />
             </View>
             <View style={style.boxBottom}>
-                <Button  text="ENTRAR" loading={loading}/>
+                <Button  text="ENTRAR" loading={loading} onPress={()=>getLogin()}/>
             </View>
             <Text style={style.textBottom}>Não tem conta? <Text  style={style.textBottomCreate}>Crie agora</Text></Text>
         </View>
