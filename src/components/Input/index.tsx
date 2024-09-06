@@ -1,5 +1,5 @@
 import React, { forwardRef, LegacyRef } from "react";
-import { TextInput, View, TextInputProps, Text, TouchableOpacity} from 'react-native';
+import { TextInput, View, TextInputProps, Text, TouchableOpacity,StyleProp,TextStyle} from 'react-native';
 import { MaterialIcons, FontAwesome, Octicons } from '@expo/vector-icons';
 import { themas } from "../../global/themes";
 import { style } from "./styles";
@@ -15,11 +15,13 @@ type Props = TextInputProps & {
     iconRightName?: string, 
     title?: string,
     onIconLeftPress?: () => void, 
-    onIconRigthPress?: () => void 
+    onIconRigthPress?: () => void ,
+    height?:number,
+    labelStyle?:StyleProp<TextStyle>
 }
 
 export const Input = forwardRef((props: Props, ref: LegacyRef<TextInput> | null) => {
-    const { IconLeft, IconRigth, iconLeftName, iconRightName, title, onIconLeftPress, onIconRigthPress, ...rest } = props;
+    const { IconLeft, IconRigth, iconLeftName, iconRightName, title, onIconLeftPress, onIconRigthPress, height,labelStyle,...rest } = props;
 
     const calculateSizeWidth = () => {
         if (IconLeft && IconRigth) {
@@ -43,8 +45,8 @@ export const Input = forwardRef((props: Props, ref: LegacyRef<TextInput> | null)
 
     return (
         <>
-            {title && <Text style={style.titleInput}>{title}</Text>}
-            <View style={[style.boxInput, { paddingLeft: calculateSizePaddingLeft() }]}>
+            {title && <Text style={[style.titleInput,labelStyle]}>{title}</Text>}
+            <View style={[style.boxInput, { paddingLeft: calculateSizePaddingLeft(),height:height?height:40}]}>
                 {IconLeft && iconLeftName && (
                     <TouchableOpacity onPress={onIconLeftPress} style={style.Button}>
                         <IconLeft name={iconLeftName as any} size={20} color={themas.Colors.gray} style={style.Icon} />
@@ -52,8 +54,9 @@ export const Input = forwardRef((props: Props, ref: LegacyRef<TextInput> | null)
                 )}
                 <TextInput 
                     {...rest}
-                    style={[style.input, { width: calculateSizeWidth() }]}
+                    style={[style.input, { width: calculateSizeWidth(),height:'100%'}]}
                     ref={ref}
+                    
                 />
                 {IconRigth && iconRightName && (
                     <TouchableOpacity onPress={onIconRigthPress} style={style.Button}>
