@@ -10,8 +10,8 @@ import {MaterialIcons,Octicons} from '@expo/vector-icons';
 export default function Login (){
     const navigation = useNavigation<NavigationProp<any>>();
 
-    const [email,setEmail]               = useState('');
-    const [password,setPassword]         = useState('');
+    const [email,setEmail]               = useState('a');
+    const [password,setPassword]         = useState('a');
     const [showPassword,setShowPassword] = useState(true);
     const [loading,setLoading]           = useState(false);
 
