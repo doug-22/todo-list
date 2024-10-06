@@ -1,56 +1,71 @@
-import React,{ useState } from "react";
+import React,{ useState,useContext} from "react";
 import { style } from "./styles";
 import { Ball } from "../../components/Ball";
 import { Input } from "../../components/Input";
-import {MaterialIcons} from '@expo/vector-icons';
-import {Text, View,StatusBar,FlatList, TouchableOpacity} from 'react-native'
+import {MaterialIcons,AntDesign} from '@expo/vector-icons';
 import { Flag } from "../../components/Flag";
 import { themas } from "../../global/themes";
-
-type PropCard = {
-    item:number,
-    title:string,
-    description:string,
-    flag:'urgente'|'opcional'
-}
-
-const data:any = [
-    {
-        item:0,
-        title:'Realizar a lição de casa!',
-        description:'página 10 a 20',
-        flag:'urgente'
-    },
-    {
-        item:1,
-        title:'Passear com cachorro!',
-        description:'página 10 a 20',
-        flag:'urgente'
-    },
-    {
-        item:2,
-        title:'Sair para tomar açai!',
-        description:'página 10 a 20',
-        flag:'urgente'
-    }
-]
+import {AuthContextList}   from "../../context/authContext_list";
+import {Text, View,StatusBar,FlatList, TouchableOpacity} from 'react-native'
+import { Swipeable } from 'react-native-gesture-handler';
 
 export default function List (){
 
+    const {taskList,handleDelete,handleEdit} = useContext<AuthContextType>(AuthContextList);
+
+    const renderRightActions = () => (
+        <View style={style.Button}>
+          <AntDesign 
+            name="delete"
+            size={20}
+            color={'#FFF'}
+          />
+        </View>
+    );
+    const renderLeftActions = () => (
+        <View style={[style.Button,{backgroundColor:themas.Colors.blueLigth}]}>
+            <AntDesign 
+                name="edit"
+                size={20}
+                color={'#FFF'}
+            />
+        </View>
+    );
+
+    const handleSwipeOpen = (direction,item) => {
+        if (direction === 'right') {
+            handleDelete(item)
+        } else if (direction === 'left') {
+            handleEdit(item)
+        }
+    }
+
     const _renderCard = (item:PropCard,index:number) =>{
+        const color  = item.flag == 'opcional'?themas.Colors.blueLigth:themas.Colors.red
         return (
-            <TouchableOpacity key={item.item} style={style.card}>
-                <View style={style.rowCard}>
-                    <View style={style.rowCardLeft}>
-                        <Ball color="red"/>
-                        <View>
-                            <Text style={style.titleCard}>{item.title}</Text>
-                            <Text style={style.descriptionCard}>{item.description}</Text>
+            <Swipeable  
+                key={item.item} 
+                renderRightActions={renderRightActions} 
+                renderLeftActions={renderLeftActions}
+                onSwipeableOpen={(direction) => handleSwipeOpen(direction,item)}
+                
+            >
+                <View style={style.card}>
+                    <View style={style.rowCard}>
+                        <View style={style.rowCardLeft}>
+                            <Ball color={color} />
+                            <View>
+                                <Text style={style.titleCard}>{item.title}</Text>
+                                <Text style={style.descriptionCard}>{item.description}</Text>
+                            </View>
                         </View>
+                        <Flag 
+                            caption={item.flag} 
+                            color={color} 
+                        />
                     </View>
-                    <Flag caption="Urgente" color={themas.Colors.red}/>
                 </View>
-            </TouchableOpacity>
+            </Swipeable >
         )
     }
     
@@ -68,12 +83,13 @@ export default function List (){
             </View>
             <View style={style.boxList}>
                 <FlatList 
-                    data={data}
+                    data={taskList}
                     style={{marginTop:40,paddingHorizontal:30}}
-                    keyExtractor={(item,index)=>item.number}
+                    keyExtractor={(item,index)=>item.item.toString()}
                     renderItem={({item,index})=>{return(_renderCard(item,index))}}
                 />
             </View>
         </View>
     )
 }
+
