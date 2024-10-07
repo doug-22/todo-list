@@ -16,7 +16,8 @@ const flags = [
     {
         caption:'Opcional',
         color:themas.Colors.blueLigth
-    }
+    },
+    
 ]
 
 export const AuthProviderList = (props:any):any=>{
