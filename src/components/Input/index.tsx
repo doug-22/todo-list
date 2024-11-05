@@ -53,7 +53,6 @@ export const Input = forwardRef((props: Props, ref: LegacyRef<TextInput> | null)
                     </TouchableOpacity>
                 )}
                 <TextInput 
-                    
                     style={[style.input, { width: calculateSizeWidth(),height:'100%'}]}
                     ref={ref}
                     multiline

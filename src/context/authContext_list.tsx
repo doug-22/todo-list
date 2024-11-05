@@ -7,6 +7,7 @@ import { MaterialIcons, AntDesign } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import CustomDateTimePicker from "../components/CustomDateTimePicker";
 import { TouchableOpacity, Text, View, StyleSheet, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import { Loading } from "../components/Loading";
 
 
 export const AuthContextList:any= createContext({});
@@ -26,7 +27,9 @@ export const AuthProviderList = (props) => {
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [showTimePicker, setShowTimePicker] = useState(false);
     const [taskList, setTaskList] = useState([]);
-    const [item,setItem] = useState(0)
+    const [taskListBackup,setTaskListBackup]= useState([]);
+    const [item,setItem] = useState(0);
+    const [loading,setLoading]= useState(false)
 
     const onOpen = () => {
         modalizeRef.current?.open();
@@ -61,8 +64,10 @@ export const AuthProviderList = (props) => {
                 selectedTime.getMinutes()
             ).toISOString()
         };
+        onClose();
     
         try {
+            setLoading(true)
             const storedData = await AsyncStorage.getItem('taskList');
             let taskList = storedData ? JSON.parse(storedData) : [];
     
@@ -79,12 +84,37 @@ export const AuthProviderList = (props) => {
     
             await AsyncStorage.setItem('taskList', JSON.stringify(taskList));
             setTaskList(taskList);
+            setTaskListBackup(taskList)
             setData()
-            onClose();
+            
         } catch (error) {
             console.error("Erro ao salvar o item:", error);
+            onOpen()
+        }finally{
+            setLoading(false)
         }
     };
+    
+    const filter = (t:string) => {
+        if(taskList.length == 0)return
+        const array = taskListBackup
+        const campos = ['title','description']
+        if (t) {
+            const searchTerm = t.trim().toLowerCase(); 
+            
+            const filteredArr = array.filter((item) =>{ 
+                for(let i =0; i<campos.length; i++){
+                    if(item[campos[i].trim()].trim().toLowerCase().includes(searchTerm))
+                        return true
+                }
+            });
+    
+            setTaskList(filteredArr);
+        } else {
+            setTaskList(array);
+        }
+    }
+
     
 
     const handleEdit = async (itemToEdit:PropCard) => {
@@ -102,6 +132,7 @@ export const AuthProviderList = (props) => {
     
     const handleDelete = async (itemToDelete) => {
         try {
+            setLoading(true)
             const storedData = await AsyncStorage.getItem('taskList');
             const taskList = storedData ? JSON.parse(storedData) : [];
             
@@ -109,19 +140,26 @@ export const AuthProviderList = (props) => {
     
             await AsyncStorage.setItem('taskList', JSON.stringify(updatedTaskList));
             setTaskList(updatedTaskList);
+            setTaskListBackup(updatedTaskList)
         } catch (error) {
             console.error("Erro ao excluir o item:", error);
+        }finally{
+            setLoading(false)
         }
     };
     
 
     async function get_taskList() {
         try {
+            setLoading(true)
             const storedData = await AsyncStorage.getItem('taskList');
             const taskList = storedData ? JSON.parse(storedData) : [];
             setTaskList(taskList);
+            setTaskListBackup(taskList)
         } catch (error) {
             console.log(error);
+        }finally{
+            setLoading(false)
         }
     }
 
@@ -229,7 +267,8 @@ export const AuthProviderList = (props) => {
     };
 
     return (
-        <AuthContextList.Provider value={{ onOpen, taskList,handleEdit,handleDelete}}>
+        <AuthContextList.Provider value={{ onOpen, taskList,handleEdit,handleDelete,taskListBackup,filter}}>
+            <Loading loading={loading}/>
             {props.children}
             <Modalize ref={modalizeRef} childrenStyle={{ height: 600 }} adjustToContentHeight={true}>
                 {_container()}

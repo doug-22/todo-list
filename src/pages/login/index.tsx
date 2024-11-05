@@ -10,8 +10,8 @@ import {MaterialIcons,Octicons} from '@expo/vector-icons';
 export default function Login (){
     const navigation = useNavigation<NavigationProp<any>>();
 
-    const [email,setEmail]               = useState('a');
-    const [password,setPassword]         = useState('a');
+    const [email,setEmail]               = useState('caio@gmail.com');
+    const [password,setPassword]         = useState('12345');
     const [showPassword,setShowPassword] = useState(true);
     const [loading,setLoading]           = useState(false);
 
@@ -21,9 +21,14 @@ export default function Login (){
             setLoading(true)
             
             if(!email ||!password){
-                return Alert.alert('Anteção 2','Informe os campos obrigatórios!')
+                return Alert.alert('Anteção','Informe os campos obrigatórios!')
             }
-            navigation.reset({routes:[{name :'BottomRoutes'}]});
+
+            if(email === 'caio@gmail.com' && password === '12345'){
+                return navigation.reset({routes:[{name :'BottomRoutes'}]});
+            }
+
+            Alert.alert('Atenção','E-mail ou senha invalida!')
         } catch (error) {
             console.log(error)
         }finally{
@@ -58,7 +63,8 @@ export default function Login (){
                     IconRigth={Octicons}
                     iconRightName={showPassword?"eye-closed":"eye"}
                     onIconRigthPress={()=>setShowPassword(!showPassword)}
-                    secureTextEntry={showPassword}
+                    secureTextEntry={true}
+                    multiline={false}
                 />
             </View>
             <View style={style.boxBottom}>

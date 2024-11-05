@@ -3,6 +3,8 @@ interface AuthContextType {
     onOpen:void,
 	handleEdit:Function,
 	handleDelete:Function,
+	taskListBackup:Array<PropCard>,
+	filter: (t: string) => void
 }
 type PropCard = {
     description: string, 
